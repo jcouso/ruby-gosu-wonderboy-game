@@ -19,8 +19,9 @@ class MyGame < Gosu::Window
       @hero.move_right
     end
     if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
-      #@player.accelerate
+      @hero.vel_y = 25
     end
+    @hero.y -= @hero.vel_y
   end
 
   def draw
@@ -39,9 +40,10 @@ end
 
 
 class Hero
+  attr_accessor :y, :vel_y
   def initialize
     @image = Gosu::Image.new("media/hero.png")
-    @x = @y = 0.0
+    @x = @y = @vel_y = 0.0
   end
 
   def wrap(x, y)
@@ -54,6 +56,10 @@ class Hero
 
   def move_right
     @x += 4
+  end
+
+  def move_up
+    @y += 1
   end
 
   def draw
