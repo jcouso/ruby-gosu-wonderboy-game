@@ -12,16 +12,7 @@ class MyGame < Gosu::Window
   end
 
   def update
-    if Gosu.button_down? Gosu::KB_LEFT or Gosu::button_down? Gosu::GP_LEFT
-      @hero.move_left
-    end
-    if Gosu.button_down? Gosu::KB_RIGHT or Gosu::button_down? Gosu::GP_RIGHT
-      @hero.move_right
-    end
-    if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
-      @hero.vel_y = 25
-    end
-    @hero.y -= @hero.vel_y
+    @hero.update
   end
 
   def draw
@@ -40,10 +31,24 @@ end
 
 
 class Hero
-  attr_accessor :y, :vel_y
+  GRAVITY = 2
   def initialize
     @image = Gosu::Image.new("media/hero.png")
     @x = @y = @vel_y = 0.0
+  end
+
+
+  def update
+    if Gosu.button_down? Gosu::KB_LEFT or Gosu::button_down? Gosu::GP_LEFT
+      move_left
+    end
+    if Gosu.button_down? Gosu::KB_RIGHT or Gosu::button_down? Gosu::GP_RIGHT
+      move_right
+    end
+    if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
+      @vel_y = -4
+    end
+      @y = @vel_y - GRAVITY
   end
 
   def wrap(x, y)
