@@ -4,7 +4,7 @@ class MyGame < Gosu::Window
   def initialize
     super 700, 500
     self.caption = "My Little Game"
-    @background = Background.new
+    @background = [Background.new, Background.new(890)]
     @hero = Hero.new
     @hero.wrap(100, 350)
     @apples = []
@@ -27,11 +27,13 @@ class MyGame < Gosu::Window
   def draw
     @apples.each { |apple| apple.draw }
     @hero.draw
-
+    puts @background[0].width
     if @hero.end?
-      @background.x -= 6
+      @background[0].x -= 6
+      @background[1].x -= 6
     end
-      @background.draw
+      @background[0].draw
+      @background[1].draw
   end
 
   def button_down(id)
@@ -45,13 +47,18 @@ end
 
 class Background
   attr_accessor :x
-  def initialize
-    @x, @y = 0
+  def initialize(x=0)
+    @y = 0
+    @x = x
     @img = Gosu::Image.new("media/background.jpg", tileable: true)
   end
 
   def draw
     @img.draw(@x, 0, 0, 0.7, 0.7)
+  end
+
+  def width
+    @img.width
   end
 
 end
@@ -94,7 +101,7 @@ class Hero
 
 
   def update
-    puts @x
+    #puts @x
     @walking = false
     if Gosu.button_down? Gosu::KB_LEFT or Gosu::button_down? Gosu::GP_LEFT
       @right = false
@@ -142,7 +149,7 @@ class Hero
   end
 
   def end?
-    @x > 300
+    @x == 310 && @walking
   end
 
   def width
