@@ -6,6 +6,7 @@ class MyGame < Gosu::Window
     self.caption = "My Little Game"
 
     @background_image = Gosu::Image.new("media/background.jpg", tileable: true)
+
     @hero = Hero.new
     @hero.wrap(100, 350)
     @apples = []
@@ -68,21 +69,27 @@ class Hero
   GRAVITY = 1
   FLOOR = 330
   def initialize
-    @image = Gosu::Image.new("media/hero.png")
+    @hero_walking = Gosu::Image.load_tiles("media/hero-animation.png", 110, 120)
+    @hero_stading = Gosu::Image.new("media/hero_standing.png")
+    #@image = Gosu::Image.new("media/hero.png")
     @x = @y = @vel_y = 0.0
+    @walking = false
     @right = true
   end
 
 
   def update
+    @walking = false
     if Gosu.button_down? Gosu::KB_LEFT or Gosu::button_down? Gosu::GP_LEFT
       @right = false
+      @walking = true
       move_left
     end
 
     if Gosu.button_down? Gosu::KB_RIGHT or Gosu::button_down? Gosu::GP_RIGHT
-      move_right
+      @walking = true
       @right = true
+      move_right
     end
 
     if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
@@ -91,7 +98,6 @@ class Hero
         @jump = true
       end
     end
-
     @y += @vel_y
     @vel_y += GRAVITY if @y != FLOOR
 
@@ -108,8 +114,9 @@ class Hero
   end
 
   def move_left
-    @x -= 6
-
+    if @x > 0
+      @x -= 6
+    end
   end
 
   def move_right
@@ -117,28 +124,34 @@ class Hero
   end
 
   def width
-    @image.width * 0.25
+    100
   end
 
   def height
-    @image.height * 0.25
+    210
   end
 
   def got_apple?(apple)
-    puts "apple X: #{ apple.x }"
-    puts "apple Y: #{ apple.y }"
-    puts "hero X: #{ @x }"
-    puts "hero Y: #{ @y }"
-    puts apple.width
     (@x + width) > apple.x && @x < (apple.x + apple.width) &&
     (@y + height) > apple.y && @y < (apple.y + apple.height)
   end
 
   def draw
-    if @right
-      @image.draw(@x, @y, 2, 0.3, 0.3)
+
+    if !@walking
+      if @right
+        @hero_stading.draw(@x, @y, 2, 0.45, 0.45)
+      else
+        @hero_stading.draw(@x + 100 , @y, 2, -0.45, 0.45)
+      end
     else
-      @image.draw(@x + 100, @y, 2, -0.3, 0.3)
+      img = @hero_walking[Gosu.milliseconds / 100 % @hero_walking.size]
+      if @right
+        #@image.draw(@x, @y, 2, 0.3, 0.3)
+        img.draw(@x, @y, 2, 0.9, 0.9)
+      else
+        img.draw(@x + 100, @y, 2, -0.9, 0.9)
+      end
     end
   end
 end
