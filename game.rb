@@ -7,11 +7,11 @@ class MyGame < Gosu::Window
 
     @background_image = Gosu::Image.new("media/background.jpg", tileable: true)
     @hero = Hero.new
-    @hero.wrap(100, 250)
+    @hero.wrap(100, 350)
     @apples = []
     5.times {
-      x = rand(100..500)
-      y = rand(100..350)
+      x = rand(300..400)
+      y = rand(200..350)
       @apples << Apple.new(x,y)
     }
   end
@@ -43,7 +43,7 @@ end
 
 
 class Apple
-  attr_reader :x, :y
+  attr_reader :x, :y, :width
   def initialize(x, y)
     @x = x
     @y = y
@@ -53,25 +53,36 @@ class Apple
   def draw
     @apple.draw(@x, @y, 1, 0.1, 0.1)
   end
+
+  def width
+    @apple.width * 0.08
+  end
+
+  def height
+    @apple.height * 0.08
+  end
 end
 
 
 class Hero
   GRAVITY = 1
-  FLOOR = 300
+  FLOOR = 330
   def initialize
     @image = Gosu::Image.new("media/hero.png")
     @x = @y = @vel_y = 0.0
+    @right = true
   end
 
 
   def update
     if Gosu.button_down? Gosu::KB_LEFT or Gosu::button_down? Gosu::GP_LEFT
+      @right = false
       move_left
     end
 
     if Gosu.button_down? Gosu::KB_RIGHT or Gosu::button_down? Gosu::GP_RIGHT
       move_right
+      @right = true
     end
 
     if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
@@ -98,18 +109,37 @@ class Hero
 
   def move_left
     @x -= 6
+
   end
 
   def move_right
     @x += 6
   end
 
+  def width
+    @image.width * 0.25
+  end
+
+  def height
+    @image.height * 0.25
+  end
+
   def got_apple?(apple)
-    (apple.x > @x) && (apple.y > @y)
+    puts "apple X: #{ apple.x }"
+    puts "apple Y: #{ apple.y }"
+    puts "hero X: #{ @x }"
+    puts "hero Y: #{ @y }"
+    puts apple.width
+    (@x + width) > apple.x && @x < (apple.x + apple.width) &&
+    (@y + height) > apple.y && @y < (apple.y + apple.height)
   end
 
   def draw
-    @image.draw(@x, @y, 2, scale_y = 0.3, scale_x = 0.3)
+    if @right
+      @image.draw(@x, @y, 2, 0.3, 0.3)
+    else
+      @image.draw(@x + 100, @y, 2, -0.3, 0.3)
+    end
   end
 end
 
