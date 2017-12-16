@@ -31,6 +31,7 @@ end
 
 class Hero
   GRAVITY = 1
+  FLOOR = 300
   def initialize
     @image = Gosu::Image.new("media/hero.png")
     @x = @y = @vel_y = 0.0
@@ -47,13 +48,21 @@ class Hero
     end
 
     if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
-      @vel_y = -20
-      @jump = true
+      if @jump == false
+        @vel_y = -20
+        @jump = true
+      end
     end
-    if @jump == true
-      @y += @vel_y
-      @vel_y = @vel_y + GRAVITY
+
+    @y += @vel_y
+    @vel_y += GRAVITY if @y != FLOOR
+
+    if @y > FLOOR
+      @vel_y = 0
+      @y = FLOOR
+      @jump = false
     end
+
   end
 
   def wrap(x, y)
@@ -61,11 +70,11 @@ class Hero
   end
 
   def move_left
-    @x -= 4
+    @x -= 6
   end
 
   def move_right
-    @x += 4
+    @x += 6
   end
 
   def move_up
