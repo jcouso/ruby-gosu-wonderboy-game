@@ -27,11 +27,11 @@ class MyGame < Gosu::Window
   def draw
     @apples.each { |apple| apple.draw }
     @hero.draw
+
     if @hero.end?
-      @background.draw(@background.x+3)
-    else
-      @background.draw
+      @background.x -= 6
     end
+      @background.draw
   end
 
   def button_down(id)
@@ -44,14 +44,14 @@ class MyGame < Gosu::Window
 end
 
 class Background
-  attr_reader :x
+  attr_accessor :x
   def initialize
     @x, @y = 0
     @img = Gosu::Image.new("media/background.jpg", tileable: true)
   end
 
-  def draw(x=0)
-    @img.draw(x, 0, 0, 0.7, 0.7)
+  def draw
+    @img.draw(@x, 0, 0, 0.7, 0.7)
   end
 
 end
@@ -142,7 +142,7 @@ class Hero
   end
 
   def end?
-    @x < 310
+    @x > 300
   end
 
   def width
