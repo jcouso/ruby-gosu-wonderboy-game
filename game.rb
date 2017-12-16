@@ -6,7 +6,6 @@ class MyGame < Gosu::Window
     self.caption = "My Little Game"
 
     @background_image = Gosu::Image.new("media/background.jpg", tileable: true)
-
     @hero = Hero.new
     @hero.wrap(250, 250)
   end
@@ -31,7 +30,7 @@ end
 
 
 class Hero
-  GRAVITY = 2
+  GRAVITY = 1
   def initialize
     @image = Gosu::Image.new("media/hero.png")
     @x = @y = @vel_y = 0.0
@@ -42,13 +41,19 @@ class Hero
     if Gosu.button_down? Gosu::KB_LEFT or Gosu::button_down? Gosu::GP_LEFT
       move_left
     end
+
     if Gosu.button_down? Gosu::KB_RIGHT or Gosu::button_down? Gosu::GP_RIGHT
       move_right
     end
+
     if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
-      @vel_y = -4
+      @vel_y = -20
+      @jump = true
     end
-      @y = @vel_y - GRAVITY
+    if @jump == true
+      @y += @vel_y
+      @vel_y = @vel_y + GRAVITY
+    end
   end
 
   def wrap(x, y)
