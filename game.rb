@@ -4,7 +4,7 @@ class MyGame < Gosu::Window
   def initialize
     super 700, 500
     self.caption = "My Little Game"
-    @background = [Background.new, Background.new(880), Background.new(1760)]
+    @background = [Background.new, Background.new(880), Background.new(2*880)]
     @hero = Hero.new
     @hero.wrap(100, 350)
     @apples = []
@@ -17,11 +17,19 @@ class MyGame < Gosu::Window
 
   def update
     @hero.update
+
     @apples.each do |apple|
       if @hero.got_apple?(apple)
         @apples.delete(apple)
       end
     end
+
+    if (@background.first.x + @background.first.width) < 0
+      b = @background.shift
+      b.x = @background.last.x + @background.last.width
+      @background << b
+    end
+
   end
 
   def draw
@@ -29,11 +37,14 @@ class MyGame < Gosu::Window
     @hero.draw
     puts @background[0].width
     if @hero.end?
-      @background[0].x -= 6
-      @background[1].x -= 6
+      @background.each do |background|
+        background.x -= 6
+      end
     end
-      @background[0].draw
-      @background[1].draw
+
+    @background.each do |background|
+        background.draw
+      end
   end
 
   def button_down(id)
@@ -58,7 +69,7 @@ class Background
   end
 
   def width
-    @img.width
+    @img.width * 0.7
   end
 
 end
