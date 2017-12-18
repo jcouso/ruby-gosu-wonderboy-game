@@ -8,15 +8,24 @@ class MyGame < Gosu::Window
     @hero = Hero.new
     @hero.wrap(100, 350)
     @apples = []
-    5.times {
-      x = rand(300..400)
-      y = rand(200..350)
+    100.times {
+      x = rand(300..100000)
+      y = rand(200..370)
       @apples << Apple.new(x,y)
     }
   end
 
   def update
     @hero.update
+
+    if @hero.end?
+      @background.each do |background|
+        background.move_right
+      end
+      @apples.each do |apple|
+          apple.x -= 6
+        end
+    end
 
     @apples.each do |apple|
       if @hero.got_apple?(apple)
@@ -35,12 +44,7 @@ class MyGame < Gosu::Window
   def draw
     @apples.each { |apple| apple.draw }
     @hero.draw
-    puts @background[0].width
-    if @hero.end?
-      @background.each do |background|
-        background.x -= 6
-      end
-    end
+
 
     @background.each do |background|
         background.draw
@@ -72,11 +76,15 @@ class Background
     @img.width * 0.7
   end
 
+  def move_right
+    @x -= 6
+  end
+
 end
 
 
 class Apple
-  attr_reader :x, :y, :width
+  attr_accessor :x, :y, :width
   def initialize(x, y)
     @x = x
     @y = y
@@ -88,11 +96,11 @@ class Apple
   end
 
   def width
-    @apple.width * 0.08
+    @apple.width * 0.07
   end
 
   def height
-    @apple.height * 0.08
+    @apple.height * 0.07
   end
 end
 
@@ -128,8 +136,11 @@ class Hero
 
     if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
       if @jump == false
-        @vel_y = -15
+        @vel_y = -20
         @jump = true
+        # if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
+        #   @vel_y -= -15
+        # end
       end
     end
     @y += @vel_y
@@ -164,16 +175,20 @@ class Hero
   end
 
   def width
-    100
+    70
   end
 
   def height
-    210
+    90
+  end
+
+  def is_walking?
+    @walking
   end
 
   def got_apple?(apple)
     (@x + width) > apple.x && @x < (apple.x + apple.width) &&
-    (@y + height) > apple.y && @y < (apple.y + apple.height)
+    (@y + height)  > apple.y && @y  < (apple.y + apple.height)
   end
 
   def draw
