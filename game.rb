@@ -4,7 +4,7 @@ class MyGame < Gosu::Window
   def initialize
     super 700, 500
     self.caption = "My Little Game"
-    @background = [Background.new, Background.new(880)]
+    @background = [Background.new, Background.new(880), Background.new(1760)]
     @hero = Hero.new
     @hero.wrap(100, 350)
     @apples = []
